@@ -12,21 +12,9 @@ namespace Engine.Models
     public class Player : LivingEntity
     {
         #region Properties
-        private string _name;
         private string _characterClass;
-        private int _hitPoints;
         private int _experiencePoints;
         private int _level;
-        private int _gold;
-        public string Name
-        {
-            get { return _name; }
-            set
-            {
-                _name = value;
-                OnPropertyChanged(nameof(Name));
-            }
-        }
         public string CharacterClass
         {
             get { return _characterClass; }
@@ -34,15 +22,6 @@ namespace Engine.Models
             {
                 _characterClass = value;
                 OnPropertyChanged(nameof(CharacterClass));
-            }
-        }
-        public int HitPoints
-        {
-            get { return _hitPoints; }
-            set
-            {
-                _hitPoints = value;
-                OnPropertyChanged(nameof(HitPoints));
             }
         }
         public int ExperiencePoints
@@ -63,20 +42,15 @@ namespace Engine.Models
                 OnPropertyChanged(nameof(Level));
             }
         }
-        public int Gold
-        {
-            get { return _gold; }
-            set
-            {
-                _gold = value;  
-                OnPropertyChanged(nameof(Gold));
-            }
-        }
 
         public ObservableCollection<QuestStatus> Quests { get; set; }
         #endregion
-        public Player()
+        public Player(string name, string characterClass, int experiencePoints,
+                              int maximumHitPoints, int currentHitPoints, int gold) :
+                    base(name, maximumHitPoints, currentHitPoints, gold)
         {
+            CharacterClass = characterClass;
+            ExperiencePoints = experiencePoints;
             Quests = new ObservableCollection<QuestStatus>();
         }
 
