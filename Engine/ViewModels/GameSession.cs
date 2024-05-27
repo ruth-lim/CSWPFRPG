@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Linq;
-using Engine.Models;
-using Engine.Factories;
 using Engine.EventArgs;
+using Engine.Factories;
+using Engine.Models;
 namespace Engine.ViewModels
 {
     public class GameSession : BaseNotificationClass
     {
         public event EventHandler<GameMessageEventArgs> OnMessageRaised;
-
         #region Properties
         private Player _currentPlayer;
         private Location _currentLocation;
         private Monster _currentMonster;
         private Trader _currentTrader;
-        public World CurrentWorld { get; set; }
-        public Player CurrentPlayer 
+        public World CurrentWorld { get; }
+        public Player CurrentPlayer
         {
             get { return _currentPlayer; }
-            set 
+            set
             {
                 if (_currentPlayer != null)
                 {
@@ -39,12 +38,12 @@ namespace Engine.ViewModels
             set
             {
                 _currentLocation = value;
-
-                OnPropertyChanged(nameof(CurrentLocation));
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(HasLocationToNorth));
                 OnPropertyChanged(nameof(HasLocationToEast));
                 OnPropertyChanged(nameof(HasLocationToWest));
                 OnPropertyChanged(nameof(HasLocationToSouth));
+                CompleteQuestsAtLocation();
                 GivePlayerQuestsAtLocation();
                 GetMonsterAtLocation();
                 CurrentTrader = CurrentLocation.TraderHere;
@@ -59,18 +58,18 @@ namespace Engine.ViewModels
                 {
                     _currentMonster.OnKilled -= OnCurrentMonsterKilled;
                 }
+
                 _currentMonster = value;
-                if (CurrentMonster != null)
+                if (_currentMonster != null)
                 {
                     _currentMonster.OnKilled += OnCurrentMonsterKilled;
                     RaiseMessage("");
                     RaiseMessage($"You see a {CurrentMonster.Name} here!");
                 }
-                OnPropertyChanged(nameof(CurrentMonster));
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(HasMonster));
             }
         }
-
         public Trader CurrentTrader
         {
             get { return _currentTrader; }
@@ -78,12 +77,11 @@ namespace Engine.ViewModels
             {
                 _currentTrader = value;
 
-                OnPropertyChanged(nameof(CurrentTrader));
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(HasTrader));
             }
         }
         public Weapon CurrentWeapon { get; set; }
-
         public bool HasLocationToNorth =>
             CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate + 1) != null;
         public bool HasLocationToEast =>
@@ -95,10 +93,9 @@ namespace Engine.ViewModels
         public bool HasMonster => CurrentMonster != null;
         public bool HasTrader => CurrentTrader != null;
         #endregion
-
         public GameSession()
         {
-            CurrentPlayer = new Player("Scott", "Fighter", 0, 10, 10, 1000000);
+            CurrentPlayer = new Player("Ruth", "Fighter", 0, 10, 10, 1000000);
             if (!CurrentPlayer.Weapons.Any())
             {
                 CurrentPlayer.AddItemToInventory(ItemFactory.CreateGameItem(1001));
@@ -134,7 +131,6 @@ namespace Engine.ViewModels
                 CurrentLocation = CurrentWorld.LocationAt(CurrentLocation.XCoordinate - 1, CurrentLocation.YCoordinate);
             }
         }
-
         private void CompleteQuestsAtLocation()
         {
             foreach (Quest quest in CurrentLocation.QuestsAvailableHere)
@@ -198,12 +194,10 @@ namespace Engine.ViewModels
                 }
             }
         }
-
         private void GetMonsterAtLocation()
         {
             CurrentMonster = CurrentLocation.GetMonster();
         }
-
         public void AttackCurrentMonster()
         {
             if (CurrentWeapon == null)
@@ -249,7 +243,6 @@ namespace Engine.ViewModels
             CurrentLocation = CurrentWorld.LocationAt(0, -1);
             CurrentPlayer.CompletelyHeal();
         }
-
         private void OnCurrentMonsterKilled(object sender, System.EventArgs eventArgs)
         {
             RaiseMessage("");

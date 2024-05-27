@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Models
 {
@@ -19,7 +17,7 @@ namespace Engine.Models
             get { return _name; }
             private set 
             { _name = value; 
-              OnPropertyChanged(nameof(Name));
+              OnPropertyChanged();
             }
         }
 
@@ -29,7 +27,7 @@ namespace Engine.Models
             private set 
             { 
                 _currentHitPoints = value;
-                OnPropertyChanged(nameof(CurrentHitPoints));
+                OnPropertyChanged();
             }
         }
 
@@ -39,7 +37,7 @@ namespace Engine.Models
             protected set 
             { 
                 _maximumHitPoints = value;
-                OnPropertyChanged(nameof(MaximumHitPoints));
+                OnPropertyChanged();
             }
         }
 
@@ -49,7 +47,7 @@ namespace Engine.Models
             private set
             {
                 _gold = value;
-                OnPropertyChanged(nameof(Gold));
+                OnPropertyChanged();
             }
         }
         public int Level
@@ -58,11 +56,11 @@ namespace Engine.Models
             protected set
             {
                 _level = value;
-                OnPropertyChanged(nameof(Level));
+                OnPropertyChanged();
             }
         }
-        public ObservableCollection<GameItem> Inventory { get; set; }
-        public ObservableCollection<GroupedInventoryItem> GroupedInventory { get; set; }
+        public ObservableCollection<GameItem> Inventory { get; }
+        public ObservableCollection<GroupedInventoryItem> GroupedInventory { get; }
 
         public List<GameItem> Weapons =>
             Inventory.Where(i => i is Weapon).ToList();
@@ -126,7 +124,7 @@ namespace Engine.Models
                 }
                 GroupedInventory.First(gi => gi.Item.ItemTypeID == item.ItemTypeID).Quantity++;
             }
-            OnPropertyChanged(nameof(Weapons));
+            OnPropertyChanged();
         }
 
         public void RemoveItemFromInventory(GameItem item)
@@ -146,7 +144,7 @@ namespace Engine.Models
                     groupedInventoryItemToRemove.Quantity--;
                 }
             }
-            OnPropertyChanged(nameof(Weapons));
+            OnPropertyChanged();
         }
 
         #region Private functions
