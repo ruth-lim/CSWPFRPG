@@ -201,6 +201,10 @@ namespace Engine.ViewModels
         }
         public void AttackCurrentMonster()
         {
+            if (CurrentMonster == null)
+            {
+                return;
+            }
             if (CurrentPlayer.CurrentWeapon == null)
             {
                 RaiseMessage("You must select a weapon, to attack.");
@@ -219,9 +223,12 @@ namespace Engine.ViewModels
         }
         public void UseCurrentConsumable()
         {
-            CurrentPlayer.UseCurrentConsumable();
+            if (CurrentPlayer.CurrentConsumable != null)
+            {
+                CurrentPlayer.UseCurrentConsumable();
+            }
         }
-        public void CraftItemsUsing(Recipe recipe)
+        public void CraftItemUsing(Recipe recipe)
         {
             if (CurrentPlayer.HasAllTheseItems(recipe.Ingredients))
             {
